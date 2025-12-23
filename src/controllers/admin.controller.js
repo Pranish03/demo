@@ -1,6 +1,6 @@
 import User from "../models/user.model.js";
 
-/*
+/**
  * @desc   Create Student or Teacher
  * @route  POST /api/admin/users
  * @access Admin
@@ -29,7 +29,7 @@ export const createUser = async (req, res) => {
   }
 };
 
-/*
+/**
  * @desc   Update user
  * @route  PUT /api/admin/users/:id
  * @access Admin
@@ -48,7 +48,7 @@ export const updateUser = async (req, res) => {
   }
 };
 
-/*
+/**
  * @desc Activate / Deactivate user
  * @route PATCH /api/admin/users/:id/status
  * @access Admin
@@ -69,7 +69,7 @@ export const toggleUserStatus = async (req, res) => {
   }
 };
 
-/*
+/**
  * @desc   Delete user
  * @route  DELETE /api/admin/users/:id
  * @access Admin

@@ -12,7 +12,7 @@ const router = express.Router();
 router.use(protect, authorize("admin"));
 
 router.post("/users", createUser);
-router.put("/users/:id", updateUser);
+router.put("/user/:id", updateUser);
 router.patch("/user/:id/status", toggleUserStatus);
 router.delete("/user/:id", deleteUser);
 
