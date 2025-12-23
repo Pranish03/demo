@@ -13,7 +13,7 @@ export const protect = async (req, res, next) => {
       req.user = await User.findById(decoded.id).select("-password");
 
       if (!req.user || !req.user.isActive)
-        return res.ststus(403).json({ message: "Account is Deactivated" });
+        return res.status(403).json({ message: "Account is Deactivated" });
 
       next();
     } catch (error) {

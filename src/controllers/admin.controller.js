@@ -8,8 +8,13 @@ import User from "../models/user.model.js";
 export const createUser = async (req, res) => {
   try {
     const { name, email, password, role, rollNo, course } = req.body;
+
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({ message: "All Fields Are Required" });
+    }
+
     if (!["student", "teacher"].includes(role))
-      return res.ststus(400).json({ message: "Invalid Role" });
+      return res.status(400).json({ message: "Invalid Role" });
 
     const exists = await User.findOne({ email });
     if (exists) return res.status(400).json({ message: "User Already Exists" });
@@ -19,13 +24,13 @@ export const createUser = async (req, res) => {
       email,
       password,
       role,
-      rollNO: role === "student" ? rollNo : undefined,
+      rollNo: role === "student" ? rollNo : undefined,
       course,
     });
 
     res.status(201).json({ message: "User Created Successfully", user });
   } catch (error) {
-    res.ststus(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -77,7 +82,7 @@ export const toggleUserStatus = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) return res.ststus(404).json({ message: "User Not Found" });
+    if (!user) return res.status(404).json({ message: "User Not Found" });
 
     res.json({ message: "User Deleted Successfully" });
   } catch (error) {

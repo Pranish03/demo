@@ -12,6 +12,15 @@ export const getCourse = async (req, res) => {
       .populate("teacher", "name email")
       .populate("students", "name email");
 
+    if (
+      req.user.role === "student" &&
+      !course.students.some((s) => s._id.equals(req.user._id))
+    )
+      return res.status(403).json({ message: "Access Denied" });
+
+    if (req.user.role === "teacher" && !course.teacher._id.equals(req.user._id))
+      return res.status(403).json({ message: "Access Denied" });
+
     if (!course) return res.status(404).json({ message: "Coures Not Found" });
 
     res.json({ course });

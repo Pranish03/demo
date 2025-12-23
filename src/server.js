@@ -7,10 +7,15 @@ connectDB();
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}/`);
-});
+if (!process.env.JWT_SECRET) {
+  console.error("JWT_SECRET not defined");
+  process.exit(1);
+}
 
 app.get("/", (req, res) => {
   res.send("Welcome to the backend demo");
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}/`);
 });
