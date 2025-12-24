@@ -1,6 +1,41 @@
 import User from "../models/user.model.js";
 
 /**
+ * @desc   Get single user
+ * @route  GET /api/admin/users/:id
+ * @access Admin
+ */
+export const getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select(
+      "_id name email role"
+    );
+    if (!user) return res.status(404).json({ message: "User Not Found" });
+
+    res.json({ user });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
+ * @desc   Get all users
+ * @route  GET /api/admin/users
+ * @access Admin
+ */
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("_id name email role");
+
+    if (!users) return res.status(404).json({ message: "No Users Found" });
+
+    res.json({ users });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
  * @desc   Create Student or Teacher
  * @route  POST /api/admin/users
  * @access Admin

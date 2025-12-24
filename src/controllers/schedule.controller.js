@@ -3,6 +3,23 @@ import Course from "../models/course.model.js";
 import User from "../models/user.model.js";
 
 /**
+ * @desc   Get single schedule
+ * @routes GET /api/admin/schedule/:id
+ * @access Admin
+ */
+export const getSchedule = async (req, res) => {
+  try {
+    const schedule = await Schedule.findById(req.params.id)
+      .populate("course", "name code")
+      .populate("teacher", "name email");
+
+    res.json(schedule);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
  * @desc   Get all schedules
  * @routes GET /api/admin/schedule
  * @access Admin
@@ -11,7 +28,7 @@ export const getSchedules = async (req, res) => {
   try {
     const schedules = await Schedule.find()
       .populate("course", "name code")
-      .populate("teacher", "name, email");
+      .populate("teacher", "name email");
 
     res.json(schedules);
   } catch (error) {

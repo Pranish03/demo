@@ -1,7 +1,8 @@
 import express from "express";
 import {
-  createSchedule,
   getSchedules,
+  getSchedule,
+  createSchedule,
   updateSchedule,
   deleteSchedule,
 } from "../controllers/schedule.controller.js";
@@ -12,6 +13,7 @@ const router = express.Router();
 router.use(protect, authorize("admin"));
 
 router.get("/", getSchedules);
+router.get("/:id", getSchedule);
 router.post("/", createSchedule);
 router.put("/:id", updateSchedule);
 router.delete("/:id", deleteSchedule);

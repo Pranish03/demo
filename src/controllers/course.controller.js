@@ -2,7 +2,7 @@ import Course from "../models/course.model.js";
 import User from "../models/user.model.js";
 
 /**
- * @desc   Get course (role-based)
+ * @desc   Get single course (role-based)
  * @route  GET /api/courses/:id
  * @access Admin / Teacher / Student
  */
