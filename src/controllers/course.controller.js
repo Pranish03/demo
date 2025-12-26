@@ -10,20 +10,20 @@ export const getCourse = async (req, res) => {
   try {
     const course = await Course.findById(req.params.id)
       .populate("teacher", "name email")
-      .populate("students", "name email");
+      .populate("semester", "name semesterNumber");
+
+    if (!course) return res.status(404).json({ message: "Course not found" });
 
     if (
       req.user.role === "student" &&
-      !course.students.some((s) => s._id.equals(req.user._id))
+      !course.semester.equals(req.user.semester)
     )
-      return res.status(403).json({ message: "Access Denied" });
+      return res.status(403).json({ message: "Access denied" });
 
-    if (req.user.role === "teacher" && !course.teacher._id.equals(req.user._id))
-      return res.status(403).json({ message: "Access Denied" });
+    if (req.user.role === "teacher" && !course.teacher.equals(req.user._id))
+      return res.status(403).json({ message: "Access denied" });
 
-    if (!course) return res.status(404).json({ message: "Coures Not Found" });
-
-    res.json({ course });
+    res.json(course);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -38,13 +38,15 @@ export const getCourses = async (req, res) => {
   try {
     let courses;
 
-    if (req.user.role === "admin")
+    if (req.user.role === "admin") {
       courses = await Course.find()
         .populate("teacher", "name email")
-        .populate("students", "name email");
-    else if (req.user.role === "teacher")
+        .populate("semester", "name semesterNumber");
+    } else if (req.user.role === "teacher") {
       courses = await Course.find({ teacher: req.user._id });
-    else courses = await Course.find({ students: req.user._id });
+    } else {
+      courses = await Course.find({ semester: req.user.semester });
+    }
 
     res.json(courses);
   } catch (error) {
@@ -73,34 +75,6 @@ export const createCourse = async (req, res) => {
     });
 
     res.status(201).json(course);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-/**
- * @desc   Enroll student
- * @route  PATCH /api/courses/:id/enroll
- * @access Admin
- */
-export const enrollStudent = async (req, res) => {
-  try {
-    const { studentId } = req.body;
-
-    const student = await User.findById(studentId);
-    if (!student || student.role !== "student")
-      return res.status(400).json({ message: "Invalid Student" });
-
-    const course = await Course.findById(req.params.id);
-    if (!course) return res.status(404).json({ message: "Course Not Found" });
-
-    if (course.students.includes(studentId))
-      return res.status(400).json({ message: "Student Already Enrolled" });
-
-    course.students.push(studentId);
-    await course.save();
-
-    res.json({ message: "Student Enrolled Successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

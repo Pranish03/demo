@@ -43,32 +43,18 @@ export const getSchedules = async (req, res) => {
  */
 export const createSchedule = async (req, res) => {
   try {
-    const { course, teacher, day, startTime, endTime, room, type } = req.body;
+    const { course, teacher, day, startTime, endTime, room } = req.body;
 
     if (!course || !teacher || !day || !startTime || !endTime || !room)
-      return res.status(400).json({ message: "Missing required fields" });
+      return res.status(400).json({ message: "Missing fields" });
 
-    const courseExists = await Course.findById(course);
-    if (!courseExists)
-      return res.status(400).json({ message: "Invalid Course" });
+    if (startTime >= endTime)
+      return res.status(400).json({ message: "Invalid time range" });
 
-    const teacherExists = await User.findById(teacher);
-    if (!teacherExists || teacherExists.role !== "teacher")
-      return res.status(400).json({ message: "Invalid Teacher" });
-
-    const schedule = await Schedule.create({
-      course,
-      teacher,
-      day,
-      startTime,
-      endTime,
-      room,
-      type,
-    });
-
+    const schedule = await Schedule.create(req.body);
     res.status(201).json(schedule);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 

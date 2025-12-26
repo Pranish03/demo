@@ -11,16 +11,17 @@ const generateToken = (id, role) => {
  */
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const user = await User.findOne({ email });
-
-    if (!user) return res.status(401).json({ message: "Invalid Credentials!" });
+    if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
     if (!user.isActive)
-      return res.status(403).json({ message: "Account Deactivated" });
+      return res.status(403).json({ message: "Account deactivated" });
 
-    if (!(await user.matchPassword(password)))
-      return res.status(401).json({ message: "Invalid Credentials!" });
+    const isMatch = await user.matchPassword(password);
+    if (!isMatch)
+      return res.status(401).json({ message: "Invalid credentials" });
 
     res.json({
       _id: user._id,

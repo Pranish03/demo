@@ -42,17 +42,19 @@ export const getAllUsers = async (req, res) => {
  */
 export const createUser = async (req, res) => {
   try {
-    const { name, email, password, role, rollNo, course } = req.body;
+    const { name, email, password, role, rollNo, program, semester } = req.body;
 
-    if (!name || !email || !password || !role) {
-      return res.status(400).json({ message: "All Fields Are Required" });
-    }
+    if (!name || !email || !password || !role)
+      return res.status(400).json({ message: "Missing fields" });
 
     if (!["student", "teacher"].includes(role))
-      return res.status(400).json({ message: "Invalid Role" });
+      return res.status(400).json({ message: "Invalid role" });
+
+    if (role === "student" && (!rollNo || !program || !semester))
+      return res.status(400).json({ message: "Student fields required" });
 
     const exists = await User.findOne({ email });
-    if (exists) return res.status(400).json({ message: "User Already Exists" });
+    if (exists) return res.status(400).json({ message: "User already exists" });
 
     const user = await User.create({
       name,
@@ -60,10 +62,11 @@ export const createUser = async (req, res) => {
       password,
       role,
       rollNo: role === "student" ? rollNo : undefined,
-      course,
+      program: role === "student" ? program : undefined,
+      semester: role === "student" ? semester : undefined,
     });
 
-    res.status(201).json({ message: "User Created Successfully", user });
+    res.status(201).json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -76,13 +79,23 @@ export const createUser = async (req, res) => {
  */
 export const updateUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const allowedUpdates = ["name", "email", "rollNo", "program", "semester"];
+    const updates = {};
+
+    for (const key of allowedUpdates) {
+      if (req.body[key] !== undefined) {
+        updates[key] = req.body[key];
+      }
+    }
+
+    const user = await User.findByIdAndUpdate(req.params.id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
     if (!user) return res.status(404).json({ message: "User Not Found" });
 
-    Object.assign(user, req.body);
-    await user.save();
-
-    res.json({ message: "User Updated Successfully", user });
+    res.json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
