@@ -6,34 +6,6 @@ const generateToken = (id, role) => {
 };
 
 /**
- * @desc   Register users
- * @route  POST /api/auth/register
- */
-export const registerUser = async (req, res) => {
-  const { name, email, password, role } = req.body;
-
-  if (!["student", "teacher"].includes(role))
-    return res.status(400).json({ message: "Invalid Role" });
-
-  try {
-    const exist = await User.findOne({ email });
-    if (exist) return res.status(400).json({ message: "User Already Exists" });
-
-    const user = await User.create({ name, email, password, role });
-
-    res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      token: generateToken(user._id, user.role),
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-/**
  * @desc   Login users
  * @route  POST /api/auth/login
  */
