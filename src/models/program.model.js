@@ -1,27 +1,34 @@
 import mongoose from "mongoose";
 
-const courseSchema = new mongoose.Schema(
+const programSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
+      unique: true,
     },
 
     code: {
       type: String,
       required: true,
       unique: true,
+      uppercase: true,
     },
 
-    teacher: {
+    department: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Department",
       required: true,
     },
 
-    semester: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Semester",
+    duration: {
+      type: Number,
+      required: true,
+    },
+
+    level: {
+      type: String,
+      enum: ["Diploma", "Bachelor", "Master", "PhD"],
       required: true,
     },
 
@@ -35,4 +42,4 @@ const courseSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("Course", courseSchema);
+export default mongoose.model("Program", programSchema);

@@ -1,28 +1,27 @@
 import mongoose from "mongoose";
 
-const courseSchema = new mongoose.Schema(
+const departmentSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
+      unique: true,
     },
 
     code: {
       type: String,
       required: true,
       unique: true,
+      uppercase: true,
     },
 
-    teacher: {
+    description: {
+      type: String,
+    },
+
+    hod: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
-    },
-
-    semester: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Semester",
-      required: true,
     },
 
     isActive: {
@@ -35,4 +34,4 @@ const courseSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("Course", courseSchema);
+export default mongoose.model("Department", departmentSchema);

@@ -6,13 +6,36 @@ const userSchema = new mongoose.Schema(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+
     role: {
       type: String,
       enum: ["admin", "teacher", "student"],
       required: true,
     },
-    rollNo: { type: String },
-    course: { type: String },
+
+    rollNo: {
+      type: String,
+      required: function () {
+        return this.role === "student";
+      },
+    },
+
+    program: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Program",
+      required: function () {
+        return this.role === "student";
+      },
+    },
+
+    semester: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Semester",
+      required: function () {
+        return this.role === "student";
+      },
+    },
+
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }

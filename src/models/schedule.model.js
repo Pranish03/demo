@@ -7,11 +7,13 @@ const scheduleSchema = new mongoose.Schema(
       ref: "Course",
       required: true,
     },
+
     teacher: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
+
     day: {
       type: String,
       enum: [
@@ -25,16 +27,31 @@ const scheduleSchema = new mongoose.Schema(
       ],
       required: true,
     },
-    startTime: { type: String, required: true },
-    endTime: { type: String, required: true },
-    room: { type: String, required: true },
+
+    startTime: {
+      type: String,
+      required: true,
+    },
+
+    endTime: {
+      type: String,
+      required: true,
+    },
+
+    room: {
+      type: String,
+      required: true,
+    },
+
     type: {
       type: String,
       enum: ["class", "exam"],
       default: "class",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 export default mongoose.model("Schedule", scheduleSchema);
