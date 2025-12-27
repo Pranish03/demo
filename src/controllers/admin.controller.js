@@ -1,41 +1,6 @@
 import User from "../models/user.model.js";
 
 /**
- * @desc   Get single user
- * @route  GET /api/admin/users/:id
- * @access Admin
- */
-export const getUser = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id).select(
-      "_id name email role"
-    );
-    if (!user) return res.status(404).json({ message: "User Not Found" });
-
-    res.json({ user });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-/**
- * @desc   Get all users
- * @route  GET /api/admin/users
- * @access Admin
- */
-export const getAllUsers = async (req, res) => {
-  try {
-    const users = await User.find().select("_id name email role");
-
-    if (!users) return res.status(404).json({ message: "No Users Found" });
-
-    res.json({ users });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-/**
  * @desc   Create Student or Teacher
  * @route  POST /api/admin/users
  * @access Admin
@@ -73,6 +38,41 @@ export const createUser = async (req, res) => {
 };
 
 /**
+ * @desc   Get all users
+ * @route  GET /api/admin/users
+ * @access Admin
+ */
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("_id name email role");
+
+    if (!users) return res.status(404).json({ message: "No users found" });
+
+    res.json({ users });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
+ * @desc   Get single user
+ * @route  GET /api/admin/users/:id
+ * @access Admin
+ */
+export const getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select(
+      "_id name email role"
+    );
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json({ user });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
  * @desc   Update user
  * @route  PUT /api/admin/users/:id
  * @access Admin
@@ -93,7 +93,7 @@ export const updateUser = async (req, res) => {
       runValidators: true,
     });
 
-    if (!user) return res.status(404).json({ message: "User Not Found" });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     res.json(user);
   } catch (error) {
@@ -109,7 +109,7 @@ export const updateUser = async (req, res) => {
 export const toggleUserStatus = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: "User Not Found" });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     user.isActive = !user.isActive;
     await user.save();
@@ -130,9 +130,9 @@ export const toggleUserStatus = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) return res.status(404).json({ message: "User Not Found" });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    res.json({ message: "User Deleted Successfully" });
+    res.json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

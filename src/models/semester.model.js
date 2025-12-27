@@ -24,13 +24,6 @@ const semesterSchema = new mongoose.Schema(
       required: true,
     },
 
-    courses: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Course",
-      },
-    ],
-
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }

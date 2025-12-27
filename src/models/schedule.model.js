@@ -8,12 +8,6 @@ const scheduleSchema = new mongoose.Schema(
       required: true,
     },
 
-    teacher: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-
     day: {
       type: String,
       enum: [

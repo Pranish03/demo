@@ -1,4 +1,5 @@
 import Semester from "../models/semester.model.js";
+import Course from "../models/course.model.js";
 
 /**
  * @desc   Create semester
@@ -7,17 +8,16 @@ import Semester from "../models/semester.model.js";
  */
 export const createSemester = async (req, res) => {
   try {
-    const { name, year, part, program, courses } = req.body;
+    const { name, year, part, program } = req.body;
 
     if (!name || !year || !part || !program)
-      return res.status(400).json({ message: "Missing Fields" });
+      return res.status(400).json({ message: "Missing fields" });
 
     const semester = await Semester.create({
       name,
       year,
       part,
       program,
-      courses,
     });
 
     res.status(201).json(semester);
@@ -31,14 +31,40 @@ export const createSemester = async (req, res) => {
  * @route  GET /api/semesters
  * @access Student
  */
-
 export const getSemesters = async (req, res) => {
   try {
-    const semesters = await Semester.find({ _id: req.user.semester })
-      .populate("program", "name code")
-      .populate("courses", "name code");
+    const semesters = await Semester.find({ _id: req.user.semester }).populate(
+      "program",
+      "name code"
+    );
 
     res.json(semesters);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
+ * @desc   Get a semster
+ * @route  GET /api/semesters/:id
+ * @access Student
+ */
+export const getSemester = async (req, res) => {
+  try {
+    const semester = await Semester.findById(req.params.id).populate(
+      "program",
+      "name code"
+    );
+
+    if (!semester)
+      return res.status(404).json({ message: "Semester not found" });
+
+    const courses = await Course.find({ semester: semester._id }).populate(
+      "teacher",
+      "name email"
+    );
+
+    res.json({ semester, courses });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -51,14 +77,20 @@ export const getSemesters = async (req, res) => {
  */
 export const getMySemester = async (req, res) => {
   try {
-    const semester = await Semester.findById(req.user.semester)
-      .populate("program", "name code")
-      .populate("courses", "name code");
+    const semester = await Semester.findById(req.user.semester).populate(
+      "program",
+      "name code"
+    );
 
     if (!semester)
-      return res.status(404).json({ message: "Semester Not Found" });
+      return res.status(404).json({ message: "Semester not found" });
 
-    res.json(semester);
+    const courses = await Course.find({ semester: semester._id }).populate(
+      "teacher",
+      "name email"
+    );
+
+    res.json({ semester, courses });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

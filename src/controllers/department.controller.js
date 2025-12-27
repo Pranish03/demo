@@ -10,7 +10,7 @@ export const createDepartment = async (req, res) => {
     const { name, code, description, hod } = req.body;
 
     if (!name || !code)
-      return res.status(400).json({ message: "Missing Fields" });
+      return res.status(400).json({ message: "Missing fields" });
 
     const department = await Department.create({
       name,
@@ -53,7 +53,7 @@ export const updateDepartment = async (req, res) => {
     );
 
     if (!department)
-      return res.status(404).json({ message: "Department Not Found" });
+      return res.status(404).json({ message: "Department not found" });
 
     res.json(department);
   } catch (error) {
@@ -71,9 +71,9 @@ export const deleteDepartment = async (req, res) => {
     const department = await Department.findByIdAndDelete(req.params.id);
 
     if (!department)
-      return res.status(404).json({ message: "Department Not Found" });
+      return res.status(404).json({ message: "Department not found" });
 
-    res.json({ message: "Department Deleted Successfully" });
+    res.json({ message: "Department deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

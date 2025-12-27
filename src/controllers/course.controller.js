@@ -1,4 +1,5 @@
 import Course from "../models/course.model.js";
+import Semester from "../models/semester.model.js";
 import User from "../models/user.model.js";
 
 /**
@@ -8,20 +9,19 @@ import User from "../models/user.model.js";
  */
 export const getCourse = async (req, res) => {
   try {
-    const course = await Course.findById(req.params.id).populate(
-      "teacher",
-      "name email"
-    );
+    const course = await Course.findById(req.params.id)
+      .populate("teacher", "name email")
+      .populate("semester", "name year part");
 
     if (!course) return res.status(404).json({ message: "Course not found" });
 
     if (
       req.user.role === "student" &&
-      !course.semester.equals(req.user.semester)
+      !course.semester._id.equals(req.user.semester)
     )
       return res.status(403).json({ message: "Access denied" });
 
-    if (req.user.role === "teacher" && !course.teacher.equals(req.user._id))
+    if (req.user.role === "teacher" && !course.teacher._id.equals(req.user._id))
       return res.status(403).json({ message: "Access denied" });
 
     res.json(course);
@@ -37,15 +37,15 @@ export const getCourse = async (req, res) => {
  */
 export const getCourses = async (req, res) => {
   try {
-    let courses;
+    let filter = {};
 
-    if (req.user.role === "admin") {
-      courses = await Course.find().populate("teacher", "name email");
-    } else if (req.user.role === "teacher") {
-      courses = await Course.find({ teacher: req.user._id });
-    } else {
-      courses = await Course.find({ semester: req.user.semester });
-    }
+    if (req.user.role === "teacher") filter.teacher = req.user._id;
+
+    if (req.user.role === "student") filter.semester = req.user.semester;
+
+    const courses = await Course.find(filter)
+      .populate("teacher", "name email")
+      .populate("semester", "name year part");
 
     res.json(courses);
   } catch (error) {
@@ -62,9 +62,16 @@ export const createCourse = async (req, res) => {
   try {
     const { name, code, teacher, semester } = req.body;
 
+    if (!name || !code || !teacher || !semester)
+      return res.status(400).json({ message: "Missing fields" });
+
     const teacherUser = await User.findById(teacher);
-    if (!teacherUser || teacherUser.role != "teacher")
-      return res.status(400).json({ message: "Invalid Teacher" });
+    if (!teacherUser || teacherUser.role !== "teacher")
+      return res.status(400).json({ message: "Invalid teacher" });
+
+    const semesterExists = await Semester.findById(semester);
+    if (!semesterExists)
+      return res.status(400).json({ message: "Invalid semester" });
 
     const course = await Course.create({
       name,

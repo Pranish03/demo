@@ -10,7 +10,7 @@ export const createProgram = async (req, res) => {
     const { name, code, department, duration, level } = req.body;
 
     if (!name || !code || !department || !duration || !level)
-      return res.status(400).json({ message: "Missing Fields" });
+      return res.status(400).json({ message: "Missing fields" });
 
     const program = await Program.create({
       name,
@@ -53,7 +53,7 @@ export const getProgram = async (req, res) => {
       "name code"
     );
 
-    if (!program) return res.status(404).json({ message: "Program Not Found" });
+    if (!program) return res.status(404).json({ message: "Program not found" });
 
     res.json(program);
   } catch (error) {

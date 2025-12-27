@@ -20,13 +20,6 @@ const userSchema = new mongoose.Schema(
       },
     },
 
-    courses: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Course",
-      },
-    ],
-
     program: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Program",
