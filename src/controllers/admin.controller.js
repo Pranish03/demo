@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import Course from "../models/course.model.js";
 
 /**
  * @desc   Create Student or Teacher
@@ -91,6 +92,13 @@ export const updateUser = async (req, res) => {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
+    if (updates.email) {
+      const emailExists = await User.findOne({ email: updates.email });
+      if (emailExists && emailExists._id.toString() !== req.params.id) {
+        return res.status(400).json({ message: "Email already in use" });
+      }
+    }
+
     if (user.role !== "student") {
       delete updates.rollNo;
       delete updates.program;
@@ -136,9 +144,18 @@ export const toggleUserStatus = async (req, res) => {
  */
 export const deleteUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
+    const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
+    if (user.role === "teacher") {
+      const hasCourses = await Course.exists({ teacher: user._id });
+      if (hasCourses)
+        return res.status(400).json({
+          message: "Cannot delete teacher assigned to courses",
+        });
+    }
+
+    await user.deleteOne();
     res.json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });

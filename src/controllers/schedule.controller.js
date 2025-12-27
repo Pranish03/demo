@@ -19,6 +19,20 @@ export const createSchedule = async (req, res) => {
     const courseData = await Course.findById(course);
     if (!courseData) return res.status(400).json({ message: "Invalid course" });
 
+    const conflict = await Schedule.findOne({
+      day,
+      room,
+      $or: [
+        { startTime: { $lt: endTime, $gte: startTime } },
+        { endTime: { $gt: startTime, $lte: endTime } },
+      ],
+    });
+
+    if (conflict)
+      return res
+        .status(400)
+        .json({ message: "Room already booked for this time slot" });
+
     const schedule = await Schedule.create({
       course,
       day,
@@ -74,6 +88,12 @@ export const getSchedules = async (req, res) => {
  */
 export const updateSchedule = async (req, res) => {
   try {
+    if (req.body.startTime && req.body.endTime) {
+      if (req.body.startTime >= req.body.endTime) {
+        return res.status(400).json({ message: "Invalid time range" });
+      }
+    }
+
     const schedule = await Schedule.findById(req.params.id);
     if (!schedule)
       return res.status(404).json({ message: "Schedule not found" });

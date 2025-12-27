@@ -10,7 +10,6 @@ const courseSchema = new mongoose.Schema(
     code: {
       type: String,
       required: true,
-      unique: true,
       uppercase: true,
     },
 
@@ -37,6 +36,7 @@ const courseSchema = new mongoose.Schema(
 );
 
 courseSchema.index({ semester: 1 });
+courseSchema.index({ code: 1, semester: 1 }, { unique: true });
 courseSchema.index({ teacher: 1 });
 courseSchema.index({ semester: 1, teacher: 1 });
 

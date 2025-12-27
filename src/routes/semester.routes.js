@@ -11,7 +11,7 @@ const router = express.Router();
 router.use(protect);
 
 router.post("/", authorize("admin"), createSemester);
-router.get("/", authorize("admin", "teacher"), getSemesters);
+router.get("/", authorize("admin", "teacher", "student"), getSemesters);
 router.get("/me", authorize("student"), getMySemester);
 
 export default router;
