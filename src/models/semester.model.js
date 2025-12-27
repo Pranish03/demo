@@ -1,3 +1,4 @@
+import { request } from "express";
 import mongoose from "mongoose";
 
 const semesterSchema = new mongoose.Schema(
@@ -7,13 +8,14 @@ const semesterSchema = new mongoose.Schema(
       required: true,
     },
 
-    semesterNumber: {
-      type: Number,
+    year: {
+      type: String,
       required: true,
     },
 
-    academicYear: {
+    part: {
       type: String,
+      required: true,
     },
 
     program: {

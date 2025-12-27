@@ -8,9 +8,10 @@ import User from "../models/user.model.js";
  */
 export const getCourse = async (req, res) => {
   try {
-    const course = await Course.findById(req.params.id)
-      .populate("teacher", "name email")
-      .populate("semester", "name semesterNumber");
+    const course = await Course.findById(req.params.id).populate(
+      "teacher",
+      "name email"
+    );
 
     if (!course) return res.status(404).json({ message: "Course not found" });
 
@@ -39,9 +40,7 @@ export const getCourses = async (req, res) => {
     let courses;
 
     if (req.user.role === "admin") {
-      courses = await Course.find()
-        .populate("teacher", "name email")
-        .populate("semester", "name semesterNumber");
+      courses = await Course.find().populate("teacher", "name email");
     } else if (req.user.role === "teacher") {
       courses = await Course.find({ teacher: req.user._id });
     } else {
@@ -61,7 +60,7 @@ export const getCourses = async (req, res) => {
  */
 export const createCourse = async (req, res) => {
   try {
-    const { name, code, teacher, semester } = req.body;
+    const { name, code, teacher } = req.body;
 
     const teacherUser = await User.findById(teacher);
     if (!teacherUser || teacherUser.role != "teacher")
@@ -71,7 +70,6 @@ export const createCourse = async (req, res) => {
       name,
       code,
       teacher,
-      semester,
     });
 
     res.status(201).json(course);

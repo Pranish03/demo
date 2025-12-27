@@ -22,7 +22,7 @@ const programSchema = new mongoose.Schema(
     },
 
     duration: {
-      type: Number,
+      type: String,
       required: true,
     },
 

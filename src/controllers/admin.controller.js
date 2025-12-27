@@ -47,7 +47,7 @@ export const createUser = async (req, res) => {
     if (!name || !email || !password || !role)
       return res.status(400).json({ message: "Missing fields" });
 
-    if (!["student", "teacher"].includes(role))
+    if (!["student", "teacher", "admin"].includes(role))
       return res.status(400).json({ message: "Invalid role" });
 
     if (role === "student" && (!rollNo || !program || !semester))
