@@ -11,6 +11,7 @@ const courseSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      uppercase: true,
     },
 
     teacher: {

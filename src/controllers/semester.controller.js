@@ -29,11 +29,17 @@ export const createSemester = async (req, res) => {
 /**
  * @desc   Get all semsters
  * @route  GET /api/semesters
- * @access Student
+ * @access Student / Admin / Teacher
  */
 export const getSemesters = async (req, res) => {
   try {
-    const semesters = await Semester.find({ _id: req.user.semester }).populate(
+    let filter = {};
+
+    if (req.user.role === "student") {
+      filter._id = req.user.semester;
+    }
+
+    const semesters = await Semester.find(filter).populate(
       "program",
       "name code"
     );

@@ -1,4 +1,3 @@
-import { request } from "express";
 import mongoose from "mongoose";
 
 const semesterSchema = new mongoose.Schema(
@@ -28,5 +27,7 @@ const semesterSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+semesterSchema.index({ program: 1, year: 1, part: 1 }, { unique: true });
 
 export default mongoose.model("Semester", semesterSchema);
