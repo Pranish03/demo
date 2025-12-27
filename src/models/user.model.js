@@ -20,6 +20,13 @@ const userSchema = new mongoose.Schema(
       },
     },
 
+    courses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+      },
+    ],
+
     program: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Program",
@@ -40,6 +47,12 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.index({ email: 1 });
+userSchema.index({ rollNo: 1 });
+userSchema.index({ semester: 1 });
+userSchema.index({ program: 1 });
+userSchema.index({ role: 1 });
 
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;

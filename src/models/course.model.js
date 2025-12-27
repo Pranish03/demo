@@ -19,6 +19,12 @@ const courseSchema = new mongoose.Schema(
       required: true,
     },
 
+    semester: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Semester",
+      required: true,
+    },
+
     isActive: {
       type: Boolean,
       default: true,
@@ -28,5 +34,9 @@ const courseSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+courseSchema.index({ semester: 1 });
+courseSchema.index({ teacher: 1 });
+courseSchema.index({ semester: 1, teacher: 1 });
 
 export default mongoose.model("Course", courseSchema);

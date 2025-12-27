@@ -60,7 +60,7 @@ export const getCourses = async (req, res) => {
  */
 export const createCourse = async (req, res) => {
   try {
-    const { name, code, teacher } = req.body;
+    const { name, code, teacher, semester } = req.body;
 
     const teacherUser = await User.findById(teacher);
     if (!teacherUser || teacherUser.role != "teacher")
@@ -70,6 +70,7 @@ export const createCourse = async (req, res) => {
       name,
       code,
       teacher,
+      semester,
     });
 
     res.status(201).json(course);

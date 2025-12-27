@@ -34,7 +34,7 @@ export const createSemester = async (req, res) => {
 
 export const getSemesters = async (req, res) => {
   try {
-    const semesters = await Semester.find(req.user.semester)
+    const semesters = await Semester.find({ _id: req.user.semester })
       .populate("program", "name code")
       .populate("courses", "name code");
 
